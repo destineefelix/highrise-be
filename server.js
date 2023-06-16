@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const logger = require("morgan")
 const dotenv = require('dotenv')
 const mongoose = require('mongoose')
 const cookieParser = require('cookie-parser')
@@ -15,6 +16,7 @@ const corsOption = {
     optionsSuccessStatus: 200
 }
 app.use(cors(corsOption)) 
+app.use(logger("dev"))
 const PORT = process.env.PORT || 5000
 
 mongoose.connect(process.env.MONGODB_URI)
@@ -25,11 +27,23 @@ mongoose.connect(process.env.MONGODB_URI)
 .catch(error => console.log(error))
 
 app.use(express.json())
-
+app.use(express.urlencoded({extended: true}));
 
 // Auth Route
 
 app.use('/auth', require("./routes/auth"))
+
+// Documents Route
+
+app.use('/documents', require("./routes/documents"))
+
+// Payment Verification
+
+app.use('/payment', require("./routes/payment"))
+
+// Notification
+
+app.use(require("./routes/notification"))
 
 
 app.get('/', (req, res) => {

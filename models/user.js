@@ -42,31 +42,6 @@ userSchema.pre("save", async function(next){
     next()
 })
 
-userSchema.statics.login = async function(email, password){
-
-    const user = await this.findOne({email})
-
-        if(user){
-
-            if(user.auth_type === "password"){
-                let isAuthenticated = await bcrypt.compare(password, user.password)
-                if(isAuthenticated){
-                    user.password = undefined
-                    return user
-                }
-                throw Error("account not found")
-            }
-
-            if(user.auth_type === "google"){
-                user.password = undefined
-                return user
-            }
-
-        }else{
-            throw Error("account not found")
-        }
-}
-
 const userModel = mongoose.model("user", userSchema)
 
 module.exports = userModel
